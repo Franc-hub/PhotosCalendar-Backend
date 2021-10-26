@@ -14,7 +14,9 @@ def test():
 
 @app.route("/users",methods=['POST'])
 def create_user():
-    print(request.json)
+    username = request.json['username']
+    email = request.json['email']
+    password = request.json['password']
 
     return{"message":"Found"}
 
