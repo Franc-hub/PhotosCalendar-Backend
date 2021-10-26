@@ -1,6 +1,6 @@
-from flask import Flask,request
+from flask import Flask,request,jsonify
 from flask_pymongo import PyMongo
-
+from werkzeug.security import check_password_hash, generate_password_hash
 app = Flask(__name__)
 app.config['MONGO_URI']='mongodb://localhost/pythonmongo'
 
@@ -8,8 +8,7 @@ mongo = PyMongo(app)
 
 @app.route("/",methods=['GET'])
 def test():
-    return {"Message":"emilia"}
-
+    return {"Message":"ok"}
 
 
 @app.route("/users",methods=['POST'])
@@ -17,8 +16,17 @@ def create_user():
     username = request.json['username']
     email = request.json['email']
     password = request.json['password']
-
-    return{"message":"Found"}
+    
+    if username and email and password  is not None:
+        hash_password = generate_password_hash(password)
+        id = mongo.db.users.insert({
+                 'username': username,'email':email, 'password':hash_password
+        })
+   
+        return jsonify (id = str(id), username = username, password=password, email  =email) ,201
+        
+    else:
+        {"message":"You didn't complete all the data"}
 
 
 if __name__ == "__main__":
