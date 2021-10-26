@@ -10,6 +10,11 @@ mongo = PyMongo(app)
 def test():
     return {"Message":"ok"}
 
+@app.error_handler(404)
+def not_found(error = None):
+    return jsonify(
+        {"message" : "resource not found" + request.url,
+         "status":   404 }) 
 
 @app.route("/users",methods=['POST'])
 def create_user():
