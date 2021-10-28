@@ -1,8 +1,8 @@
 from flask import Flask,request,jsonify,Response
 from flask_pymongo import PyMongo
 from werkzeug.security import check_password_hash, generate_password_hash
-from bson import json_util
-from werkzeug.wrappers import response
+from bson import json_util,ObjectId
+
 
 
 app = Flask(__name__)
@@ -33,8 +33,8 @@ def create_user():
     email = request.json['email']
     password = request.json['password']
     
-    if username and email and password  is not None and mongo.db.users.find():
-        
+    if username and email and password  is not None and mongo.db.users.find_one(username != username and email != email):
+
         hash_password = generate_password_hash(password)
         id = mongo.db.users.insert({
                  'username': username,'email':email, 'password':hash_password
@@ -51,6 +51,13 @@ def get_all_users():
     users = mongo.db.users.find()
     res = json_util.dumps(users)
     return Response(res,mimetype='application/json'), 200
+
+@app.route("/users/<id>",methods=['GET'])
+def get_one_user(id):
+    user = mongo.db.users.find_one({'_id':ObjectId(id)})
+    res = json_util.dumbs(user)
+    return Response(res,mimetype='application/json'), 200
+@app.route("/users",methods=['GET'])
 
 if __name__ == "__main__":
     app.run(debug=True)
