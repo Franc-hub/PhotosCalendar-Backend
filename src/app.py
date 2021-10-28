@@ -55,9 +55,19 @@ def get_all_users():
 @app.route("/users/<id>",methods=['GET'])
 def get_one_user(id):
     user = mongo.db.users.find_one({'_id':ObjectId(id)})
-    res = json_util.dumbs(user)
+    res = json_util.dumps(user)
     return Response(res,mimetype='application/json'), 200
-@app.route("/users",methods=['GET'])
+
+@app.route("/users/<id>",methods=['DELETE'])
+def delete_one_user(id):
+    if id == True:
+        mongo.db.users.delete_one({'_id':ObjectId(id)})
+        res = jsonify({"message": "User " + id+ "was Delated sucessfully"}),202
+        return res
+
+    else:
+        return not_found()
+
 
 if __name__ == "__main__":
     app.run(debug=True)
