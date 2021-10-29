@@ -33,7 +33,7 @@ def create_user():
     email = request.json['email']
     password = request.json['password']
     
-    if username and email and password  is not None and mongo.db.users.find_one(username != username and email != email):
+    if username and email and password  is not None :
 
         hash_password = generate_password_hash(password)
         id = mongo.db.users.insert({
@@ -54,17 +54,36 @@ def get_all_users():
 
 @app.route("/users/<id>",methods=['GET'])
 def get_one_user(id):
+    
     user = mongo.db.users.find_one({'_id':ObjectId(id)})
     res = json_util.dumps(user)
     return Response(res,mimetype='application/json'), 200
 
 @app.route("/users/<id>",methods=['DELETE'])
 def delete_one_user(id):
-    if id == True:
-        mongo.db.users.delete_one({'_id':ObjectId(id)})
-        res = jsonify({"message": "User " + id+ "was Delated sucessfully"}),202
-        return res
+    
+    mongo.db.users.delete_one({'_id':ObjectId(id)})
+    res = jsonify({"message": "User " + id+ "was Delated sucessfully"}),202
+    return res
 
+
+
+
+@app.route("/users/<id>", methods = ['PUT'])
+def update_data_user(id):
+
+    username = request.json['username']
+    email = request.json['email']
+    password = request.json['password']
+    if username and email and password:
+        hash_password = generate_password_hash(password)
+        mongo.db.users.update_one({"_id":ObjectId(id)},{'$set' : {
+            'username':username,
+            'password':hash_password,
+            'email':email
+        }})
+        res = jsonify({"message":"User" + id + "was Updateed succesfully"})    
+        return res , 202
     else:
         return not_found()
 

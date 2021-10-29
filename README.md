@@ -5,7 +5,8 @@ Commands:
 
 source ./venv/bin/activate  
 #
-to inizalazing the virtual env with the dependencies 
+to inizalazing the virtual env 
+ 
 
 python src/app.py
 #
